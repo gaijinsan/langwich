@@ -1,0 +1,124 @@
+{
+  "infinitive_verb_options": [
+    {
+      "prefix": "(to) ",
+      "min_length": 5,
+      "search_pattern": "ied$",
+      "replace_pattern": "ied$",
+      "replace": "y",
+      "comment": "e.g., 'tried' -> 'try'"
+    },
+    {
+      "prefix": "(to) ",
+      "min_length": 5,
+      "search_pattern": "ed$",
+      "replace_pattern": "ed$",
+      "replace": "",
+      "comment": "e.g., 'played' -> 'play'"
+    },
+    {
+      "prefix": "(to) ",
+      "min_length": 5,
+      "search_pattern": "ing$",
+      "replace_pattern": "ing$",
+      "replace": "",
+      "comment": "e.g., 'playing' -> 'play'"
+    },
+    {
+      "prefix": "(to) ",
+      "min_length": 5,
+      "search_pattern": "ing$",
+      "replace_pattern": "ing$",
+      "replace": "e",
+      "comment": "e.g., 'making' -> 'make'"
+    },
+    {
+      "prefix": "(to) ",
+      "min_length": 5,
+      "search_pattern": "es$",
+      "replace_pattern": "es$",
+      "replace": "",
+      "comment": "e.g., 'watches' -> 'watch'"
+    },
+    {
+      "prefix": "(to) ",
+      "min_length": 3,
+      "search_pattern": "[^s]s$",
+      "replace_pattern": "s$",
+      "replace": "",
+      "comment": "e.g., 'runs' -> 'run'"
+    },
+    {
+      "prefix": "(to) ",
+      "comment": "e.g., 'bragged' -> 'brag', or 'stopped' -> 'stop'",
+      "min_length": 5,
+      "search_pattern": "([b-df-hj-np-tv-z])\\1ed$",
+      "replace_pattern": "([b-df-hj-np-tv-z])\\1ed$",
+      "replace": "\\1"
+    },
+    {
+      "prefix": "(to) ",
+      "comment": "e.g., 'bragging' -> 'brag', or 'stopping' -> 'stop'",
+      "min_length": 5,
+      "search_pattern": "([b-df-hj-np-tv-z])\\1ing$",
+      "replace_pattern": "([b-df-hj-np-tv-z])\\1ing$",
+      "replace": "\\1"
+    }
+  ],
+  "singular_noun_options": [
+    {
+      "min_length": 5,
+      "search_pattern": "shes$",
+      "replace_pattern": "shes$",
+      "replace": "sh"
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "sses$",
+      "replace_pattern": "sses$",
+      "replace": "ss"
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "ches$",
+      "replace_pattern": "ches$",
+      "replace": "ch"
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "oes$",
+      "replace_pattern": "oes$",
+      "replace": "o"
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "zzes$",
+      "replace_pattern": "zzes$",
+      "replace": "z"
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "xes$",
+      "replace_pattern": "xes$",
+      "replace": "x"
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "[^s]ses$",
+      "replace_pattern": "es$",
+      "replace": ""
+    },
+    {
+      "min_length": 5,
+      "search_pattern": "ies$",
+      "replace_pattern": "ies$",
+      "replace": "y"
+    },
+    {
+      "min_length": 3,
+      "search_pattern": "[^s]s$",
+      "replace_pattern": "s$",
+      "replace": ""
+    }
+  ]
+}

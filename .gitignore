@@ -1,0 +1,27 @@
+/venv
+/node_modules
+*.log
+*.pyc
+/dist
+.DS_store
+
+# Ignore all __pycache__ directories in the project
+**/__pycache__/
+
+# Ignore data files but not the enclosing dirs
+metadata.json
+backups/*
+!backups/.gitkeep
+texts/*
+!texts/.gitkeep
+text_sentences/*
+!text_sentences/.gitkeep
+text_words/*
+!text_words/.gitkeep
+words/*
+!words/.gitkeep
+
+# random files
+/langs/NOPEen_ua.json
+/notes.txt
+/scratch_pad.txt
