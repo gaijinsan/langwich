@@ -144,9 +144,11 @@ rsync -av --progress \
     --exclude=/.git \
     --exclude=/.gitignore \
     --exclude=/deploy.sh \
+    --exclude=/pyproject.toml \
     "${EXCLUDE_ARGS[@]}" \
     . "$RELEASE_DIR"
 
+rsync -av --progress ./pyproject.toml "$DEPLOY_ROOT"
 # 4. Remove all .gitkeep files from the clean release copy
 echo "Removing all .gitkeep files from the new release..."
 find "$RELEASE_DIR" -name ".gitkeep" -delete
@@ -189,6 +191,7 @@ echo "4. Install dependencies:"
 echo "   pip install -r requirements.txt"
 echo ""
 echo "5. Install the local project as a package (REQUIRED for python -m to work):"
+echo "   cd $DEPLOY_ROOT"
 echo "   pip install -e ."
 echo "   # NOTE: This step requires a 'setup.py' or 'pyproject.toml' file in the current directory."
 echo "   # If you see an error, your project is missing a Python packaging definition."
