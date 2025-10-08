@@ -11,8 +11,10 @@ DEV_DEPLOYMENT_SUFFIX="_dev"
 
 if [ "$DEPLOY_MODE" == "dev" ]; then
     DEPLOYMENT_SUFFIX="$DEV_DEPLOYMENT_SUFFIX"
+    SHARED="shared_dev"
 elif [ "$DEPLOY_MODE" == "live" ]; then
     DEPLOYMENT_SUFFIX="$LIVE_DEPLOYMENT_SUFFIX"
+    SHARED="shared"
 else
     echo "Usage: $0 [dev|live]"
     echo "  'dev'  - Deploy to a development environment (for testing)"
@@ -29,7 +31,7 @@ USER_DATA=("backups" "text_sentences" "text_words" "texts" "words" "metadata.jso
 
 # Define structural directories within DEPLOY_ROOT
 RELEASES_DIR="$DEPLOY_ROOT/releases"
-SHARED_DIR="$DEPLOY_ROOT/shared"
+SHARED_DIR="$DEPLOY_ROOT/$SHARED"
 CURRENT_SYMLINK="$DEPLOY_ROOT/langwich"
 
 # Create a unique, timestamped release directory for this new code version
@@ -119,7 +121,7 @@ symlink_shared_dirs() {
             rm -rf "$RELEASE_DIR/$ARTIFACT"
         fi
 
-        RELATIVE_PATH="../../shared/$ARTIFACT"
+        RELATIVE_PATH="../../$SHARED/$ARTIFACT"
 
         # 2. Create the symlink from the release to the shared location
         ln -s "$RELATIVE_PATH" "$RELEASE_DIR/$ARTIFACT"
@@ -195,7 +197,7 @@ echo "Deployment structure:"
 echo "  $DEPLOY_ROOT/"
 echo "  ├── langwich -> releases/$TIMESTAMP"
 echo "  ├── releases/"
-echo "  └── shared/ (contains persistent data: data, logs, etc.)"
+echo "  └── $SHARED/ (contains persistent data: data, logs, etc.)"
 echo ""
 echo "You must set up a clean virtual environment in the new release folder:"
 echo ""

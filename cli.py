@@ -1568,6 +1568,8 @@ def edit(edit_text=None, randomize=False):
                 post_style = Style.RESET_ALL
             print(f"  {pre_style}n{post_style}) save and next             q) exit")
             while True:
+                if IS_DEV_MODE:
+                    print(f"{Fore.RED}[DEV-MODE]{Style.RESET_ALL}")
                 num_input = input("Enter a valid option: ").lower()
                 input_cmd = None
                 edit_param = None
@@ -3147,6 +3149,8 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
     for hash in set(all_hashes):
         words_studied[hash] = 0
 
+    if IS_DEV_MODE:
+        print(f"{Fore.RED}[DEV-MODE]{Style.RESET_ALL}")
     print(f"{Fore.BLUE}If you're stumped, press '.' and enter to get a hint.{Style.RESET_ALL}")
     skip_word = False
     next_word = False
