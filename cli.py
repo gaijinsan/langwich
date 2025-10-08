@@ -636,13 +636,13 @@ def list_texts(filter=None, limit=None):
         if ctr >= limit:
             break
         ctr += 1
-        print(f"{"    " if text["label"] else text["percent"]}", end="|")
-        print(f"{"  " if text["label"] else text["fulltext"]}", end="|")
-        print(f"{"          " if text["label"] else text["last_study"]}", end="|")
-        print(f"{" " if text["label"] else text["url"]}", end="|")
-        print(f"{text["short_hash"]}", end="|")
-        print(f"{"    " if text["label"] else text["tag"]}", end="|")
-        print(f"{Fore.GREEN + text["label"] + Style.RESET_ALL if text["label"] else text["title"]}")
+        print(f'{"    " if text["label"] else text["percent"]}', end="|")
+        print(f'{"  " if text["label"] else text["fulltext"]}', end="|")
+        print(f'{"          " if text["label"] else text["last_study"]}', end="|")
+        print(f'{" " if text["label"] else text["url"]}', end="|")
+        print(f'{text["short_hash"]}', end="|")
+        print(f'{"    " if text["label"] else text["tag"]}', end="|")
+        print(f'{Fore.GREEN + text["label"] + Style.RESET_ALL if text["label"] else text["title"]}')
     print()
 
 def ensure_text_hashes_populated():
