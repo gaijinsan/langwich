@@ -1482,7 +1482,7 @@ def edit(edit_text=None, randomize=False):
             print(native_sent + alt_sentence + the_sent)
             if next_context:
                 print("\n".join(next_context))
-            print(f"\n  {meaning["internal_type"].capitalize()}: {Fore.BLUE + word + Style.RESET_ALL}")
+            print(f'\n  {meaning["internal_type"].capitalize()}: {Fore.BLUE + word + Style.RESET_ALL}')
             # TODO make these lang settings
             #import urllib.parse
             #safe_word = urllib.parse.quote_plus(word)
@@ -1875,9 +1875,9 @@ def edit(edit_text=None, randomize=False):
                     for i in range(9):
                         print(space_char, end="")
                     for i in range(word_len-9):
-                        print(f"{Fore.GREEN + nums[floor(i/10)] + Style.RESET_ALL}", end=("" if i < word_len-10 else "\n"))
+                        print(f'{Fore.GREEN + nums[floor(i/10)] + Style.RESET_ALL}', end=("" if i < word_len-10 else "\n"))
                 for i in range(word_len):
-                    print(f"{Fore.GREEN}{nums[i % 10]}{Style.RESET_ALL}", end="")
+                    print(f'{Fore.GREEN}{nums[i % 10]}{Style.RESET_ALL}', end="")
                 print(f"\n{word_stress}")
                 while True:
                     stress_marks = input(f"Add stresses (1 or 2,3 or 2-4), 'c' to clear, 'n' for none, 'q' to exit{sugg_text}: ").lower()
@@ -2020,7 +2020,7 @@ def get_user_suggestion(suggestions, fieldname):
         for i, suggestion in enumerate(suggestions):
             print(f"    {i+1}) {Fore.BLUE + suggestion + Style.RESET_ALL}")
             max_i = i+1
-        print(f"Or type in a new {Fore.GREEN + fieldname + Style.RESET_ALL} (q to exit): ", end="")
+        print(f'Or type in a new {Fore.GREEN + fieldname + Style.RESET_ALL} (q to exit): ', end="")
         user_translation = input(f"{gr_prompt} ")
         if user_translation in exit_letter:
             user_exit = True
@@ -2504,7 +2504,7 @@ def set_lang_defaults():
 
 def add_stress(word, stresses, stress_colours={"bg": Back.BLUE, "fg": Fore.YELLOW}, norm_colours={"fg": Fore.BLUE}):
     if not stresses:
-        return f"{norm_colours["fg"] + word + Style.RESET_ALL}"
+        return f'{norm_colours["fg"] + word + Style.RESET_ALL}'
 
     stresses = stresses.split(",")
     stressed_word = ""
@@ -2515,7 +2515,7 @@ def add_stress(word, stresses, stress_colours={"bg": Back.BLUE, "fg": Fore.YELLO
             stressed_word += f"{bg_clr + fg_clr + w + Style.RESET_ALL}"
         else:
             bg = norm_colours["bg"] if "bg" in norm_colours else ""
-            stressed_word += f"{bg + norm_colours["fg"] + w + Style.RESET_ALL}"
+            stressed_word += f'{bg + norm_colours["fg"] + w + Style.RESET_ALL}'
     return stressed_word
 
 def build_word_heading(word, word_data, rev_study=False):
@@ -2598,7 +2598,7 @@ def build_word_heading(word, word_data, rev_study=False):
             word_heading += f" {head_alt_clr}({alt_rep}){Style.RESET_ALL}"
 
     if "type" in word_data and word_data.get("type", "") != "":
-        word_heading += f" {head_type_clr}({word_data.get("type")}){Style.RESET_ALL}"
+        word_heading += f' {head_type_clr}({word_data.get("type")}){Style.RESET_ALL}'
 
     label = []
     if "tags" in word_data and word_data.get("tags", "") != "":
@@ -3310,7 +3310,7 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                     hint_len = 0
                     whole_hint = word if rev_study else correct_translation.split(",")[0].replace("(","").replace(")","")
                     while True:
-                        hint = f" (hint: {Fore.GREEN + whole_hint[:hint_len] + Style.RESET_ALL})" if hint_len else ""
+                        hint = f' (hint: {Fore.GREEN + whole_hint[:hint_len] + Style.RESET_ALL})' if hint_len else ""
                         if not rev_study:
                             word_prompt = f"{Fore.BLUE + short_heading + Style.RESET_ALL}"
                         else:
@@ -3361,7 +3361,7 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                             pass
                         print(f"\nEditing {Fore.BLUE + word + Style.RESET_ALL}")
                         for i, word_key in enumerate(editable_word_keys):
-                            print(f"{i+1}) {word_key}: {Fore.GREEN + word_data.get(word_key, "<empty>") + Style.RESET_ALL}")
+                            print(f'{i+1}) {word_key}: {Fore.GREEN + word_data.get(word_key, "<empty>") + Style.RESET_ALL}')
                             max_i = i+1
                         if word_data["internal_type"] != "word":
                             print(f"d) delete")
@@ -3399,7 +3399,7 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                         if edit_key == "base":
                             copy_option = f"(enter {cp_str} to copy from {Fore.BLUE + word + Style.RESET_ALL}) "
                         elif edit_key == "base_translation":
-                            copy_option = f"(enter {cp_str} to copy from {Fore.BLUE + word_data.get("translation", "") + Style.RESET_ALL}) "
+                            copy_option = f'(enter {cp_str} to copy from {Fore.BLUE + word_data.get("translation", "") + Style.RESET_ALL}) '
                         elif edit_key == "translation":
                             # use index to find translation suggestions
                             suggestions, _ = search_word_index(word, base=correct_base)
@@ -3427,7 +3427,7 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                             edit_input = word
                         elif edit_key == "base_translation" and edit_input == "!cp":
                             edit_input = word_data.get("translation", "")
-                        print(f"Changing {Fore.GREEN + edit_key + Style.RESET_ALL} from {Fore.RED + word_data.get(edit_key, "<empty>") + Style.RESET_ALL} to {Fore.GREEN + edit_input + Style.RESET_ALL}")
+                        print(f'Changing {Fore.GREEN + edit_key + Style.RESET_ALL} from {Fore.RED + word_data.get(edit_key, "<empty>") + Style.RESET_ALL} to {Fore.GREEN + edit_input + Style.RESET_ALL}')
                         confirmation = input("Please confirm (y/n): ")
                         if confirmation.lower() == "y":
                             word_data[edit_key] = edit_input
@@ -3490,9 +3490,9 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                             alt_answers += add_unique_alt_answers(no_parens_text, alt_answers + orig_answers)
 
                         possible_answers = set(answer.lower() for answer in possible_answers)
-                        answers_output = f"{Fore.GREEN + ", ".join(orig_answers) + Style.RESET_ALL}"
+                        answers_output = f'{Fore.GREEN + ", ".join(orig_answers) + Style.RESET_ALL}'
                         if alt_answers:
-                            answers_output += f"\nOther answer(s): {", ".join(alt_answers)}"
+                            answers_output += f'\nOther answer(s): {", ".join(alt_answers)}'
 
                     elif rev_study and not lang_map:
                         # create one list to use with any() in the if statement below
@@ -3516,7 +3516,7 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                         possible_answers = set(answer.lower() for answer in possible_answers)
                         answers_output = f"{Fore.GREEN + word + Style.RESET_ALL}"
                         if alt_answers:
-                            answers_output += f"\nOther answer(s): {", ".join(alt_answers)}"
+                            answers_output += f'\nOther answer(s): {", ".join(alt_answers)}'
 
                     if not rev_study and any(user_input.lower() == translation for translation in possible_answers):
                         print(Fore.GREEN + "Correct!" + Style.RESET_ALL)
