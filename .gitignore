@@ -1,9 +1,9 @@
-/langwich_venv
 /venv
 /node_modules
 *.log
 *.pyc
 /dist
+/.python-version
 .DS_store
 
 # Ignore all __pycache__ directories in the project
