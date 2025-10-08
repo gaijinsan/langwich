@@ -1482,7 +1482,7 @@ def edit(edit_text=None, randomize=False):
             the_sent = f"\n{Fore.MAGENTA}>{Style.RESET_ALL} " + the_sent
 
             if IS_DEV_MODE:
-                print(f"{Fore.RED}[DEV-MODE]{Style.RESET_ALL}")
+                print(f"{Fore.RED}[DEV-DATA]{Style.RESET_ALL}")
 
             print(native_sent + alt_sentence + the_sent)
             if next_context:
@@ -1569,7 +1569,7 @@ def edit(edit_text=None, randomize=False):
             print(f"  {pre_style}n{post_style}) save and next             q) exit")
             while True:
                 if IS_DEV_MODE:
-                    print(f"{Fore.RED}[DEV-MODE]{Style.RESET_ALL}")
+                    print(f"{Fore.RED}[DEV-DATA]{Style.RESET_ALL}")
                 num_input = input("Enter a valid option: ").lower()
                 input_cmd = None
                 edit_param = None
@@ -3150,7 +3150,7 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
         words_studied[hash] = 0
 
     if IS_DEV_MODE:
-        print(f"{Fore.RED}[DEV-MODE]{Style.RESET_ALL}")
+        print(f"{Fore.RED}[DEV-DATA]{Style.RESET_ALL}")
     print(f"{Fore.BLUE}If you're stumped, press '.' and enter to get a hint.{Style.RESET_ALL}")
     skip_word = False
     next_word = False
@@ -3324,6 +3324,10 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                             word_prompt = f"{Fore.BLUE + short_heading + Style.RESET_ALL}"
                         else:
                             word_prompt = word_heading if alt_representation_required else f"{Fore.BLUE + correct_translation + Style.RESET_ALL}"
+
+                        if IS_DEV_MODE:
+                            print(f"{Fore.RED}[DEV-DATA]{Style.RESET_ALL}")
+
                         user_input = input(f"\n{word_heading}{native_sent}{alt_sentence}{sentence}\n{Fore.GREEN}Guess the translation of{Style.RESET_ALL} {word_prompt}{hint}? ")
                         if user_input != '.':
                             break
@@ -3368,6 +3372,10 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
                                 pyperclip.copy(f'{word}')
                         except:
                             pass
+
+                        if IS_DEV_MODE:
+                            print(f"{Fore.RED}[DEV-DATA]{Style.RESET_ALL}")
+
                         print(f"\nEditing {Fore.BLUE + word + Style.RESET_ALL}")
                         for i, word_key in enumerate(editable_word_keys):
                             print(f'{i+1}) {word_key}: {Fore.GREEN + word_data.get(word_key, "<empty>") + Style.RESET_ALL}')
