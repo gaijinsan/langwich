@@ -10,6 +10,7 @@ import re
 from math import floor
 from colorama import Fore, Back, Style
 from langwich.core.rules_manager import RulesManager
+from langwich import IS_DEV_MODE
 
 app_root_dir = pathlib.Path(__file__).resolve().parent
 
@@ -1479,6 +1480,10 @@ def edit(edit_text=None, randomize=False):
                 add_stress_marks=not alt_representation_required
             )
             the_sent = f"\n{Fore.MAGENTA}>{Style.RESET_ALL} " + the_sent
+
+            if IS_DEV_MODE:
+                print(f"{Fore.RED}[DEV-MODE]{Style.RESET_ALL}")
+
             print(native_sent + alt_sentence + the_sent)
             if next_context:
                 print("\n".join(next_context))

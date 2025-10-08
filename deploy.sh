@@ -4,8 +4,24 @@
 # Get the name of the current project directory (e.g., 'my_python_app')
 PROJECT_NAME=$(basename "$(pwd)")
 
+# Determine deployment mode and directory suffix
+DEPLOY_MODE=$1
+LIVE_DEPLOYMENT_SUFFIX="_live"
+DEV_DEPLOYMENT_SUFFIX="_dev"
+
+if [ "$DEPLOY_MODE" == "dev" ]; then
+    DEPLOYMENT_SUFFIX="$DEV_DEPLOYMENT_SUFFIX"
+elif [ "$DEPLOY_MODE" == "live" ]; then
+    DEPLOYMENT_SUFFIX="$LIVE_DEPLOYMENT_SUFFIX"
+else
+    echo "Usage: $0 [dev|live]"
+    echo "  'dev'  - Deploy to a development environment (for testing)"
+    echo "  'live' - Deploy to a live production environment"
+    exit 1
+fi
+
 # Define the root directory for all deployment artifacts.
-DEPLOY_ROOT="../${PROJECT_NAME}_live"
+DEPLOY_ROOT="../${PROJECT_NAME}${DEPLOYMENT_SUFFIX}"
 
 # Define directories that contain persistent, application-generated data.
 # These directories will be excluded from code copying and symlinked from a 'shared' location.
@@ -152,6 +168,10 @@ rsync -av --progress ./pyproject.toml "$DEPLOY_ROOT"
 # 4. Remove all .gitkeep files from the clean release copy
 echo "Removing all .gitkeep files from the new release..."
 find "$RELEASE_DIR" -name ".gitkeep" -delete
+
+# 4.5 If deploy to dev, write a .env file with development settings
+if [ "$DEPLOY_MODE" == "dev" ]; then
+    echo $DEPLOY_MODE > "$RELEASE_DIR/.app_env_mode"
 
 # 5. Create symlinks for persistent data files and directories
 symlink_shared_dirs
