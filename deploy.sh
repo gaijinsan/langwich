@@ -14,7 +14,7 @@ USER_DATA=("backups" "text_sentences" "text_words" "texts" "words" "metadata.jso
 # Define structural directories within DEPLOY_ROOT
 RELEASES_DIR="$DEPLOY_ROOT/releases"
 SHARED_DIR="$DEPLOY_ROOT/shared"
-CURRENT_SYMLINK="$DEPLOY_ROOT/current"
+CURRENT_SYMLINK="$DEPLOY_ROOT/langwich"
 
 # Create a unique, timestamped release directory for this new code version
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
