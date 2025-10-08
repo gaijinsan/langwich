@@ -172,6 +172,7 @@ find "$RELEASE_DIR" -name ".gitkeep" -delete
 # 4.5 If deploy to dev, write a .env file with development settings
 if [ "$DEPLOY_MODE" == "dev" ]; then
     echo $DEPLOY_MODE > "$RELEASE_DIR/.app_env_mode"
+fi
 
 # 5. Create symlinks for persistent data files and directories
 symlink_shared_dirs
