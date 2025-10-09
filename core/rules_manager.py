@@ -37,17 +37,31 @@ class RulesManager:
     def infinitivize(self, word, language, rule_type="infinitive_verb_options"):
         if self.is_infinitive(word):
             return [word]
-        return self._apply_rules(
+        return self._apply_grammar_rules(
             word, language, rule_type
         )
 
     def singularize(self, word, language, rule_type="singular_noun_options"):
-        return self._apply_rules(
+        return self._apply_grammar_rules(
             word, language, rule_type,
             exceptions_key="singular_noun_exceptions"
         )
 
-    def _apply_rules(self, word, language, rule_type, exceptions_key=None):
+    def is_simple(self, word, language, rule_type="alphabets"):
+        rules = self.get_rules(language)[rule_type]
+        if rules == "simple":
+            return True
+        for _, info in rules.items():
+            if info["simple"]:
+                continue
+            for ch in word:
+                codepoint = ord(ch)
+                for start, end in info["ranges"]:
+                    if int(start, 16) <= codepoint <= int(end, 16):
+                        return False
+        return True
+
+    def _apply_grammar_rules(self, word, language, rule_type, exceptions_key=None):
 
         rules = self.get_rules(language)
 

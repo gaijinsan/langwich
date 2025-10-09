@@ -1,0 +1,29 @@
+{
+  "alphabets": {
+    "kanji": {
+      "ranges": [
+        ["4e00", "9faf"],
+        ["3400", "4dbf"]
+      ],
+      "simple": false
+    },
+    "hiragana": {
+      "ranges": [
+        ["3041", "3096"]
+      ],
+      "simple": true
+    },
+    "katakana": {
+      "ranges": [
+        ["30a1", "30f7"]
+      ],
+      "simple": true
+    },
+    "halfwidth_katakana": {
+      "ranges": [
+        ["ff65", "ff9f"]
+      ],
+      "simple": true
+    }
+  }
+}

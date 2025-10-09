@@ -161,7 +161,10 @@ rsync -av --progress \
     "${DEV_EXCLUDES[@]}" \
     --exclude=/.git \
     --exclude=/.gitignore \
+    --exclude=/tests \
+    --exclude=/pytest.ini \
     --exclude=/deploy.sh \
+    --exclude=/requirements-dev.txt \
     --exclude=/pyproject.toml \
     "${EXCLUDE_ARGS[@]}" \
     . "$RELEASE_DIR"

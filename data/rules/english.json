@@ -120,5 +120,6 @@
       "replace_pattern": "s$",
       "replace": ""
     }
-  ]
+  ],
+  "alphabets": "simple"
 }

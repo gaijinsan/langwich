@@ -1283,6 +1283,8 @@ def edit(edit_text=None, randomize=False):
     global GLOBAL_WORD_INDEX, glob_words_index_lang, glob_words_index_count
     global current_hash
 
+    rule_mgr = RulesManager(rules_dir=rules_dir)
+
     backup_present = {}
 
     lang = Language(current_language)
@@ -1811,18 +1813,18 @@ def edit(edit_text=None, randomize=False):
             elif editable_word_keys[int(num_input)-1] == "special_alt_rep":
                 # show a selection list
                 alt_reps = [word]
-                alt_reps_no_kanji = []
-                if not word_has_kanji(word):
-                    alt_reps_no_kanji.append(word)
+                alt_reps_simple = []
+                if rule_mgr.is_simple(word, current_language):
+                    alt_reps_simple.append(word)
                 raw_alt_reps = meaning.get("alt_representation", "").split(",")
                 for alt_rep in raw_alt_reps:
                     if alt_rep == word or not alt_rep:
                         continue
-                    if not word_has_kanji(alt_rep):
-                        alt_reps_no_kanji.append(alt_rep)
+                    if rule_mgr.is_simple(alt_rep, current_language):
+                        alt_reps_simple.append(alt_rep)
                     alt_reps.append(alt_rep)
                 if current_language == "japanese":
-                    alt_reps = alt_reps_no_kanji
+                    alt_reps = alt_reps_simple
                 print(f"Select a special alternate representation for {word}: ")
                 for i, alt_rep in enumerate(alt_reps):
                     print(f"  {i+1}) {alt_rep}")
