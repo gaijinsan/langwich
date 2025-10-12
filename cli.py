@@ -386,7 +386,7 @@ def fix_metadata(hash_substring=None, quiet=False):
     linked_texts = None
     full_hash = None
     if hash_substring:
-        full_hash = get_matching_hash(hash_substring)
+        full_hash = get_full_hash(hash_substring)
         if not full_hash:
             return False
         text2fix = Text(full_hash)
@@ -517,7 +517,7 @@ def list_texts(filter=None, limit=None):
 
     hash_label = None
     if filter and filter not in ["a", "f", "nf"]:
-        hash_label = get_matching_hash(filter)
+        hash_label = get_full_hash(filter)
     if filter and (filter not in ["a", "f", "nf"] and hash_label not in existing_metadata):
         print("Invalid argument. Valid arguments are: a, f, nf, or the hash of a text.")
         return
@@ -738,30 +738,6 @@ def char_is_dbl_len(c):
         return True
     else:
         return False
-
-def char_is_kanji(c):
-    if "\u4e00" <= c <= "\u9faf":
-        return True
-    elif "\u3400" <= c <= "\u4dbf":
-        return True
-    else:
-        return False
-
-def char_is_kana(c):
-    if "\u3041" <= c <= "\u3096":
-        return True
-    elif "\u30a1" <= c <= "\u30f7":
-        return True
-    else:
-        return False
-
-def word_has_kanji(w, any=False):
-    for c in w:
-        if char_is_kanji(c):
-            return True
-        if any and char_is_kana(c):
-            return True
-    return False
 
 def alert(text):
     print(f"{Back.RED + str(text) + Style.RESET_ALL}")
@@ -2305,7 +2281,7 @@ def get_langdata(lang, user_friendly=False, quiet=False):
     else:
         return lang_code, lang_data
 
-def get_matching_hash(hash_substring):
+def get_full_hash(hash_substring):
 
     ensure_text_hashes_populated()
     matching_hashes = [h for h in text_hashes if h.startswith(hash_substring)]
@@ -3020,7 +2996,7 @@ def set_metadata(requested_hash, edit_dict):
     return True
 
 def edit_metadata(hash_substring):
-    full_hash = get_matching_hash(hash_substring)
+    full_hash = get_full_hash(hash_substring)
     if not full_hash:
         return False
 
@@ -3084,7 +3060,7 @@ def edit_metadata(hash_substring):
         else:
             print(Fore.RED + "Change aborted!" + Style.RESET_ALL)
 
-def study(hash_substring=None, rev_study=False, lang_map=None):
+def study(short_hash=None, rev_study=False, lang_map=None):
 
     import pyperclip
 
@@ -3093,8 +3069,8 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
     backup_present = {}
     hash_list = []
     language = current_language
-    if hash_substring:
-        full_hash = get_matching_hash(hash_substring)
+    if short_hash:
+        full_hash = get_full_hash(short_hash)
         if not full_hash:
             return False
         metadata = get_metadata(full_hash)
@@ -3110,15 +3086,6 @@ def study(hash_substring=None, rev_study=False, lang_map=None):
 
     if not index_words(language):
         return False
-    #if (not GLOBAL_WORD_INDEX
-        #or glob_words_index_lang != language
-        #or glob_words_index_count <= 1):
-        #if not index_words(language):
-            #return False
-        #with open(os.path.join(words_dir, f"{language}_index.json"), 'r') as f:
-            #GLOBAL_WORD_INDEX = json.load(f)
-        #glob_words_index_lang = language
-        #glob_words_index_count = default_words_index_count
 
     all_words_dict = get_word_data(
         hash_list=hash_list,
@@ -3839,7 +3806,7 @@ def repl():
             if len(params) > 1:
                 # confirm if user wants to extend this existing text
                 short_hash = params[1]
-                full_hash = get_matching_hash(short_hash)
+                full_hash = get_full_hash(short_hash)
                 if not full_hash:
                     print("Could not find a matching text. Aborting.")
                     return False
@@ -3930,7 +3897,7 @@ def repl():
             randomize = True
             if len(params) == 3 and params[2] == "o":
                 randomize = False
-            hash = get_matching_hash(short_hash)
+            hash = get_full_hash(short_hash)
             if not hash:
                 continue
             edit_text = Text(hash)

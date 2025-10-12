@@ -13,3 +13,7 @@ def test_is_simple_word_with_kana():
 def test_is_simple_word_with_kanji():
     word = "猫"  # neko, kanji
     assert rule_mgr.is_simple(word, "japanese") is False
+
+def test_is_simple_word_with_mixed():
+    word = "来る"  # neko, kanji
+    assert rule_mgr.is_simple(word, "japanese") is False
