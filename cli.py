@@ -3060,6 +3060,30 @@ def edit_metadata(hash_substring):
         else:
             print(Fore.RED + "Change aborted!" + Style.RESET_ALL)
 
+def get_hashes(full_hash):
+    hash_list = []
+    metadata = get_metadata(full_hash)
+
+    base_hash = None
+    while True:
+        prev_hash = metadata.get("prev_hash", None)
+        if prev_hash:
+            metadata = get_metadata(prev_hash)
+            base_hash = prev_hash
+        else:
+            break
+    if not base_hash:
+        base_hash = full_hash
+    hash_list.append(base_hash)
+    while True:
+        next_hash = metadata.get("next_hash", None)
+        if next_hash:
+            hash_list.append(next_hash)
+            metadata = get_metadata(next_hash)
+        else:
+            break
+    return hash_list
+
 def study(short_hash=None, rev_study=False, lang_map=None):
 
     import pyperclip
@@ -3073,16 +3097,7 @@ def study(short_hash=None, rev_study=False, lang_map=None):
         full_hash = get_full_hash(short_hash)
         if not full_hash:
             return False
-        metadata = get_metadata(full_hash)
-
-        hash_list.append(full_hash)
-        while True:
-            next_hash = metadata.get("next_hash", None)
-            if next_hash:
-                hash_list.append(next_hash)
-                metadata = get_metadata(next_hash)
-            else:
-                break
+        hash_list = get_hashes(full_hash)
 
     if not index_words(language):
         return False
