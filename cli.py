@@ -3824,7 +3824,7 @@ def repl():
                 full_hash = get_full_hash(short_hash)
                 if not full_hash:
                     print("Could not find a matching text. Aborting.")
-                    return False
+                    continue
                 metadata = get_metadata(full_hash)
                 text_type = metadata["type"].lower()
             if not text_type:
