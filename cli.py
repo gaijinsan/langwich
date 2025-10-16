@@ -8,6 +8,7 @@ import shutil
 import random
 import re
 from math import floor
+import pyperclip
 from colorama import Fore, Back, Style
 from langwich.core.rules_manager import RulesManager
 from langwich import IS_DEV_MODE
@@ -1256,9 +1257,13 @@ def unabbrev_wordtype(word_type):
         return "abbreviation"
     else:
         return word_type
-    
+
+def pyperclip_copy(text):
+    if len(text) < 20:
+        text = text + "                      "
+    pyperclip.copy(f'{text}')
+
 def edit(edit_text=None, randomize=False):
-    import pyperclip
 
     global GLOBAL_WORD_INDEX, glob_words_index_lang, glob_words_index_count
     global current_hash
@@ -1440,9 +1445,9 @@ def edit(edit_text=None, randomize=False):
         while True:
             if not sentence_copied:
                 if copy_quotes:
-                    pyperclip.copy(f'"{word}"')
+                    pyperclip_copy(f'"{word}"')
                 else:
-                    pyperclip.copy(f'{word}')
+                    pyperclip_copy(f'{word}')
             else:
                 sentence_copied = False
             #try:
@@ -1776,7 +1781,7 @@ def edit(edit_text=None, randomize=False):
                     orig_sent = sentence.replace(' ', '')
                 #else:
                     #orig_sent = sentence
-                pyperclip.copy(f'{orig_sent}')
+                pyperclip_copy(f'{orig_sent}')
                 print(f"Sentence: {orig_sent}")
                 sentence_copied = True
             elif input_cmd == 'delete':
@@ -3090,8 +3095,6 @@ def get_hashes(full_hash):
 
 def study(short_hash=None, rev_study=False, lang_map=None):
 
-    import pyperclip
-
     global current_hash, GLOBAL_WORD_INDEX, glob_words_index_lang, glob_words_index_count
 
     backup_present = {}
@@ -3355,9 +3358,9 @@ def study(short_hash=None, rev_study=False, lang_map=None):
                     while True:
                         try:
                             if copy_quotes:
-                                pyperclip.copy(f'"{word}"')
+                                pyperclip_copy(f'"{word}"')
                             else:
-                                pyperclip.copy(f'{word}')
+                                pyperclip_copy(f'{word}')
                         except:
                             pass
 
