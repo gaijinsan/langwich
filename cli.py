@@ -11,6 +11,12 @@ from math import floor
 from colorama import Fore, Back, Style
 from langwich.core.rules_manager import RulesManager
 from langwich import IS_DEV_MODE
+# Ensure GNU readline is imported so built-in input() supports arrow-key editing
+try:
+    import readline  # enables line editing and history for input()
+except Exception:
+    # Not fatal: continue without readline (Windows, minimal installs, etc.)
+    pass
 
 app_root_dir = pathlib.Path(__file__).resolve().parent
 
@@ -211,7 +217,7 @@ class Text:
 #           - if same word exists in index, include option to view these and copy from one
 #               - adding a meaning to a word should show all identical words and allow user to add meaning to all or a subset
 #           - phrase function should prompt for first-word position (with default suggestion to current)
-#               - this will allow skipped words to be used as 1st word in a phrase
+#               - wip: this will allow skipped words to be used as 1st word in a phrase
 #               - !phrase should show all identical phrases and allow user to create phrases for all or subset (eg. 1,3,4-6 or something)
 #           - after "Add alternate representation", !same (!cp to be consistent?) should copy the main word to the alt_rep
 #           - user-friendly versions of key names in list
@@ -292,15 +298,14 @@ def get_text_title(text):
 def process_and_save_text(text, text_type, title=None, append_to=None):
     global glob_words_index_count
 
-    #new_text = Text()
-    md_timestamp = datetime.now()
-    hash = generate_hash(md_timestamp)
-    filename = f"{hash}.txt"
-    text_dir = os.path.join(texts_dir, current_language)
-    filepath = os.path.join(text_dir, filename)
+    timestamp = datetime.now()
+    new_hash = generate_hash(timestamp)
+    filename = f"{new_hash}.txt"
+    filedir = os.path.join(texts_dir, current_language)
+    filepath = os.path.join(filedir, filename)
     prev_hash = append_to if append_to else None
 
-    os.makedirs(text_dir, exist_ok=True)
+    os.makedirs(filedir, exist_ok=True)
 
     # Save text to file
     try:
@@ -312,7 +317,7 @@ def process_and_save_text(text, text_type, title=None, append_to=None):
 
     # Add default timestamp and title metadata
     metadata = {
-        "timestamp": md_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         "language": current_language,
         "type": text_type,
         "title": title if title else get_text_title(text)
@@ -329,20 +334,19 @@ def process_and_save_text(text, text_type, title=None, append_to=None):
             break
 
     if prev_hash:
+        prev_metadata = get_metadata(prev_hash)
+        prev_metadata["next_hash"] = new_hash
+        update_metadata(prev_hash, prev_metadata)
         metadata["prev_hash"] = prev_hash
 
     # Update metadata file
-    update_metadata(hash, metadata)
+    update_metadata(new_hash, metadata)
 
-    if prev_hash:
-        prev_metadata = get_metadata(prev_hash)
-        prev_metadata["next_hash"] = hash
-        update_metadata(prev_hash, prev_metadata)
 
-    if not parse_sentences(hash):
+    if not parse_sentences(new_hash):
         return False
 
-    if not parse_text(hash):
+    if not parse_text(new_hash):
         return False
 
     glob_words_index_count = 0
