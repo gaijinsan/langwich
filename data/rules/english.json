@@ -19,6 +19,14 @@
     {
       "prefix": "(to) ",
       "min_length": 5,
+      "search_pattern": "ed$",
+      "replace_pattern": "ed$",
+      "replace": "e",
+      "comment": "e.g., 'observed' -> 'observe'"
+    },
+    {
+      "prefix": "(to) ",
+      "min_length": 5,
       "search_pattern": "ing$",
       "replace_pattern": "ing$",
       "replace": "",
