@@ -1,14 +1,15 @@
 #!/bin/bash
 
+set -o errexit
+
 # --- CONFIGURATION ---
 # Get the name of the current project directory (e.g., 'my_python_app')
 PROJECT_NAME=$(basename "$(pwd)")
 
-# Determine deployment mode and directory suffix
-DEPLOY_MODE=$1
 LIVE_DEPLOYMENT_SUFFIX="_live"
 DEV_DEPLOYMENT_SUFFIX="_dev"
 
+DEPLOY_MODE=$1
 if [ "$DEPLOY_MODE" == "dev" ]; then
     DEPLOYMENT_SUFFIX="$DEV_DEPLOYMENT_SUFFIX"
     SHARED="shared_dev"
@@ -16,10 +17,42 @@ elif [ "$DEPLOY_MODE" == "live" ]; then
     DEPLOYMENT_SUFFIX="$LIVE_DEPLOYMENT_SUFFIX"
     SHARED="shared"
 else
-    echo "Usage: $0 [dev|live]"
-    echo "  'dev'  - Deploy to a development environment (for testing)"
-    echo "  'live' - Deploy to a live production environment"
+    echo "Usage: $0 [dev|live] [version (if live)]"
+    echo "  'dev'  - Deploy to development environment (for testing)"
+    echo "  'live <version>' - Deploy version <version> to live production environment"
     exit 1
+fi
+
+if [[ -z $(git status --porcelain) ]]; then
+    echo "Working directory is clean. Proceeding with deployment."
+elif [ "$DEPLOY_MODE" == "dev" ]; then
+    if [[ -z $(git status --porcelain | grep -v 'deploy.sh') ]]; then
+        echo "Working directory is clean. Proceeding with dev deployment."
+    else
+        echo "Working directory is not clean. Aborting dev deployment."
+        exit 1
+    fi
+else
+    echo "Working directory is not clean. Aborting deployment."
+    exit 1
+fi
+
+if [ "$DEPLOY_MODE" == "live" ]; then
+    VERSION=$2
+    if [ -z "$VERSION" ]; then
+        echo "Please include a version."
+        exit 1
+    fi
+
+    if git rev-parse --verify "refs/tags/$VERSION" >/dev/null 2>&1; then
+        echo "Deploying version $VERSION to $DEPLOY_MODE..."
+        git checkout $VERSION
+    else
+        echo "Error: Version '$VERSION' does not correspond to a valid Git tag."
+        exit 1
+    fi
+else
+    VERSION=$(git rev-parse --short HEAD)
 fi
 
 # Define the root directory for all deployment artifacts.
@@ -178,6 +211,10 @@ find "$RELEASE_DIR" -name ".gitkeep" -delete
 if [ "$DEPLOY_MODE" == "dev" ]; then
     echo $DEPLOY_MODE > "$RELEASE_DIR/.app_env_mode"
 fi
+
+# 4.6 Write the deployed version to a VERSION file in the release
+echo "Writing deployed version info to VERSION file..."
+echo "$VERSION" > "$RELEASE_DIR/VERSION"
 
 # 5. Create symlinks for persistent data files and directories
 symlink_shared_dirs
