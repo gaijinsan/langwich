@@ -1,4 +1,3 @@
-import sys
 import pathlib
 import json
 import hashlib
@@ -1259,8 +1258,7 @@ def unabbrev_wordtype(word_type):
         return word_type
 
 def pyperclip_copy(text):
-    if len(text) < 20:
-        text = text + "                      "
+    text = text + "  " # to avoid pyperclip bug with unicode words
     pyperclip.copy(f'{text}')
 
 def edit(edit_text=None, randomize=False):
