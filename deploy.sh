@@ -2,9 +2,19 @@
 
 set -o errexit
 
+usage () {
+    echo "Usage 1: $1 dev <branch>"
+    echo "Usage 2: $1 live <version>"
+    echo "  'dev  <branch>'  - Deploy branch <branch> to dev environment"
+    echo "  'live <version>' - Deploy version <version> to live environment"
+    exit 1
+}
+
 # --- CONFIGURATION ---
 # Get the name of the current project directory (e.g., 'my_python_app')
-PROJECT_NAME=$(basename "$(pwd)")
+CURR_DIR=$(pwd)
+PARENT_DIR=$(dirname "$CURR_DIR")
+PROJECT_NAME=$(basename "$CURR_DIR")
 
 LIVE_DEPLOYMENT_SUFFIX="_live"
 DEV_DEPLOYMENT_SUFFIX="_dev"
@@ -17,46 +27,34 @@ elif [ "$DEPLOY_MODE" == "live" ]; then
     DEPLOYMENT_SUFFIX="$LIVE_DEPLOYMENT_SUFFIX"
     SHARED="shared"
 else
-    echo "Usage: $0 [dev|live] [version (if live)]"
-    echo "  'dev'  - Deploy to development environment (for testing)"
-    echo "  'live <version>' - Deploy version <version> to live production environment"
-    exit 1
+    usage $0
 fi
 
-if [[ -z $(git status --porcelain) ]]; then
-    echo "Working directory is clean. Proceeding with deployment."
-elif [ "$DEPLOY_MODE" == "dev" ]; then
-    if [[ -z $(git status --porcelain | grep -v 'deploy.sh') ]]; then
-        echo "Working directory is clean. Proceeding with dev deployment."
-    else
-        echo "Working directory is not clean. Aborting dev deployment."
-        exit 1
-    fi
-else
-    echo "Working directory is not clean. Aborting deployment."
-    exit 1
+VERSION=$2
+if [ -z "$VERSION" ]; then
+    usage $0
 fi
 
 if [ "$DEPLOY_MODE" == "live" ]; then
-    VERSION=$2
-    if [ -z "$VERSION" ]; then
-        echo "Please include a version."
-        exit 1
-    fi
-
-    if git rev-parse --verify "refs/tags/$VERSION" >/dev/null 2>&1; then
-        echo "Deploying version $VERSION to $DEPLOY_MODE..."
-        git checkout $VERSION
-    else
+    if ! git rev-parse --verify "refs/tags/$VERSION" >/dev/null 2>&1; then
         echo "Error: Version '$VERSION' does not correspond to a valid Git tag."
         exit 1
     fi
 else
-    VERSION=$(git rev-parse --short HEAD)
+    if ! git rev-parse --verify --quiet "$VERSION" > /dev/null; then
+        echo "Error: Branch '$VERSION' does not exist."
+        exit 1
+    fi
 fi
+echo "Deploying version $VERSION to $DEPLOY_MODE."
+
+WORK_DIR=$(mktemp --directory -t "langwich-XXXXXXXXXX")
+trap "rm --recursive --force $WORK_DIR" EXIT
+git worktree add --detach "$WORK_DIR" "$VERSION"
+cd "$WORK_DIR"
 
 # Define the root directory for all deployment artifacts.
-DEPLOY_ROOT="../${PROJECT_NAME}${DEPLOYMENT_SUFFIX}"
+DEPLOY_ROOT="${PARENT_DIR}/${PROJECT_NAME}${DEPLOYMENT_SUFFIX}"
 
 # Define directories that contain persistent, application-generated data.
 # These directories will be excluded from code copying and symlinked from a 'shared' location.
@@ -81,7 +79,7 @@ DEV_EXCLUDES=()
 # Function to read .gitignore and convert its patterns into rsync --exclude arguments.
 # Handles negation (!) by converting them into --include rules.
 generate_gitignore_excludes() {
-    echo "Generating rsync exclusions/inclusions from .gitignore..."
+    echo "Generating rsync exclusions/inclusions from .gitignore."
     if [ -f .gitignore ]; then
         while IFS= read -r LINE; do
             # 1. Clean line: strip Windows carriage returns (\r) and remove leading/trailing whitespace
@@ -123,7 +121,7 @@ generate_gitignore_excludes() {
 
 # Sets up the shared directory structure and handles initial copy of shared files
 setup_shared_dirs() {
-    echo "Ensuring shared data directories and files exist..."
+    echo "Ensuring shared data directories and files exist."
     for ARTIFACT in "${USER_DATA[@]}"; do
         SHARED_PATH="$SHARED_DIR/$ARTIFACT"
         SHARED_PARENT=$(dirname "$SHARED_PATH")
@@ -147,18 +145,9 @@ setup_shared_dirs() {
 
 # Symlinks the shared data directories and files into the new release
 symlink_shared_dirs() {
-    echo "Symlinking persistent data artifacts into release $TIMESTAMP..."
+    echo "Symlinking persistent data artifacts into release $TIMESTAMP."
     for ARTIFACT in "${USER_DATA[@]}"; do
-        # 1. Remove the artifact if it was accidentally copied with the code
-        if [ -e "$RELEASE_DIR/$ARTIFACT" ]; then
-            rm -rf "$RELEASE_DIR/$ARTIFACT"
-        fi
-
-        RELATIVE_PATH="../../$SHARED/$ARTIFACT"
-
-        # 2. Create the symlink from the release to the shared location
-        ln -s "$RELATIVE_PATH" "$RELEASE_DIR/$ARTIFACT"
-        #ln -s "$SHARED_DIR/$ARTIFACT" "$RELEASE_DIR/$ARTIFACT"
+        ln -s "$SHARED_DIR/$ARTIFACT" "$RELEASE_DIR/$ARTIFACT"
     done
 }
 
@@ -174,7 +163,7 @@ mkdir -p "$RELEASES_DIR"
 setup_shared_dirs
 
 # 2. Prepare persistent data exclusions
-echo "Preparing exclusions for persistent data artifacts..."
+echo "Preparing exclusions for persistent data artifacts."
 EXCLUDE_ARGS=()
 for ARTIFACT in "${USER_DATA[@]}"; do
     # Persistent data directories/files must always be excluded from the copy
@@ -187,7 +176,7 @@ done
 #     2. Excludes ($DEV_EXCLUDES).
 #     3. Hardcoded exclusions (like /.git)
 #     4. Data exclusions ($EXCLUDE_ARGS)
-echo "Copying essential project files..."
+echo "Copying essential project files."
 
 rsync -av --progress \
     "${DEV_INCLUDES[@]}" \
@@ -204,7 +193,7 @@ rsync -av --progress \
 
 rsync -av --progress ./pyproject.toml "$DEPLOY_ROOT"
 # 4. Remove all .gitkeep files from the clean release copy
-echo "Removing all .gitkeep files from the new release..."
+echo "Removing all .gitkeep files from the new release."
 find "$RELEASE_DIR" -name ".gitkeep" -delete
 
 # 4.5 If deploy to dev, write a .env file with development settings
@@ -213,7 +202,7 @@ if [ "$DEPLOY_MODE" == "dev" ]; then
 fi
 
 # 4.6 Write the deployed version to a VERSION file in the release
-echo "Writing deployed version info to VERSION file..."
+echo "Writing deployed version info to VERSION file."
 echo "$VERSION" > "$RELEASE_DIR/VERSION"
 
 # 5. Create symlinks for persistent data files and directories
@@ -269,3 +258,5 @@ echo ""
 echo "7. Run the application using the correct module and entry point:"
 echo "   python -m $PROJECT_NAME.<entry_point>"
 echo "   (Example: If your project is named 'langapp' and the entry module is 'cli', run: python -m langapp.cli)"
+
+exit 0
