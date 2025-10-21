@@ -2602,49 +2602,8 @@ def build_word_heading(word, word_data, rev_study=False):
 
     return word_heading, short_heading
 
-#def get_singular(plural):
-    #poss_sing = []
-    #plurals = plural.split(",")
-    #for plural in plurals:
-        #if len(plural) > 4 and (plural[-4:] in ["ches", "shes"] or plural[-3:] in ["ses", "xes", "oes"]):
-            #poss_sing.append(plural[:-2])
-            #if plural[-3:] == "ses":
-                #poss_sing.append(plural[:-2])
-        #elif len(plural) > 4 and plural[-4:] == "zzes":
-            #poss_sing.append(plural[:-3])
-        #elif len(plural) > 2 and plural[-1:] == "s" and plural[-2:] != "ss":
-            #poss_sing.append(plural[:-1])
-    #if len(poss_sing) > 1:
-        #poss_sing.append(",".join(poss_sing))
-    #return poss_sing
-
 # TODO - have IPA symbols as an option and an IPA helper with native words that use displayed symbols
 # TODO - old-fashioned terminal app (not CLI) possible? (ratatui?)
-#def get_infinitive(verb):
-    ## if "to" or "(to)" already at start, return None
-    #if verb[:4] == "(to)" or verb[:3] == "to ":
-        #return [verb]
-
-    #poss_infs = []
-    #infs_set = set()
-    #verbs = verb.split(",")
-    #for verb in verbs:
-        #infs_set.add("(to) " + verb)
-        #if verb[-1:] in ['s', 'd']:
-            #infs_set.add("(to) " + verb[:-1])
-        #if verb[-2:] in ['es', 'ed']:
-            #infs_set.add("(to) " + verb[:-2])
-        #if verb[-2:] == "ed" and verb[-3] == verb[-4]:
-            #infs_set.add("(to) " + verb[:-3])
-    #for inf in infs_set:
-        #if inf.strip() != "(to)":
-            #poss_infs.append(inf)
-    #return poss_infs
-    # "moves"   => -s   => "(to) move"
-    # "reaches" => -es  => "(to) reach"
-    # "moved"   => -d   => "(to) move"
-    # "treated" => -ed  => "(to) treat"
-    # "tapped"  => -ped => "(to) tap"
 
 def search_word_index(word,
                       base=None,
@@ -2670,15 +2629,12 @@ def search_word_index(word,
             # try to determine infinitive verb if we think we have a simple past/present verb
             if type in ["verb", "suru verb"] and search_keys == ["base_translation"]:
                 pos_inf = rule_mgr.infinitivize(inc, "english")
-                #pos_inf = get_infinitive(inc)
                 for inf in pos_inf:
                     suggestions.add(inf)
                     cnt_dict[inf] = 1 if not cnt_dict.get(inf, "") else cnt_dict[inf]+1
             # try to determine singular noun if we think we have a regular plural noun
             if type == "noun" and search_keys == ["base_translation"]:
                 pos_sing = rule_mgr.singularize(inc, "english")
-                #suggestions.add("rule_mgr 3")
-                #pos_sing = get_singular(inc)
                 for sing in pos_sing:
                     suggestions.add(sing)
                     cnt_dict[sing] = 1 if not cnt_dict.get(sing, "") else cnt_dict[sing]+1
@@ -2726,14 +2682,11 @@ def search_word_index(word,
                                 cnt_dict[new_sugg] = 1 if not cnt_dict.get(new_sugg, "") else cnt_dict[new_sugg] + 1
                                 if type in ["verb", "suru verb"] and search_keys == ["base_translation"]:
                                     pos_inf = rule_mgr.infinitivize(new_sugg, "english")
-                                    #pos_inf = get_infinitive(new_sugg)
                                     for inf in pos_inf:
                                         suggestions.add(inf)
                                         cnt_dict[inf] = 1 if not cnt_dict.get(inf, "") else cnt_dict[inf]+1
                                 if type == "noun" and search_keys == ["base_translation"]:
                                     pos_sing = rule_mgr.singularize(new_sugg, "english")
-                                    #suggestions.add("rule_mgr 2")
-                                    #pos_sing = get_singular(new_sugg)
                                     for sing in pos_sing:
                                         suggestions.add(sing)
                                         cnt_dict[sing] = 1 if not cnt_dict.get(sing, "") else cnt_dict[sing]+1
@@ -2753,14 +2706,11 @@ def search_word_index(word,
                             cnt_dict[new_sugg] = 1 if not cnt_dict.get(new_sugg, "") else cnt_dict[new_sugg] + 1
                             if type in ["verb", "suru verb"] and search_keys == ["base_translation"]:
                                 pos_inf = rule_mgr.infinitivize(new_sugg, "english")
-                                #pos_inf = get_infinitive(new_sugg)
                                 for inf in pos_inf:
                                     suggestions.add(inf)
                                     cnt_dict[inf] = 1 if not cnt_dict.get(inf, "") else cnt_dict[inf]+1
                             if type == "noun" and search_keys == ["base_translation"]:
                                 pos_sing = rule_mgr.singularize(new_sugg, "english")
-                                #suggestions.add("rule_mgr 1")
-                                #pos_sing = get_singular(new_sugg)
                                 for sing in pos_sing:
                                     suggestions.add(sing)
                                     cnt_dict[sing] = 1 if not cnt_dict.get(sing, "") else cnt_dict[sing]+1
@@ -2810,14 +2760,11 @@ def search_word_index(word,
                         cnt_dict[new_sugg] = 1 if not cnt_dict.get(new_sugg, "") else cnt_dict[new_sugg] + 1
                         if type in ["verb", "suru verb"] and search_keys == ["base_translation"]:
                             pos_inf = rule_mgr.infinitivize(new_sugg, "english")
-                            #pos_inf = get_infinitive(new_sugg)
                             for inf in pos_inf:
                                 suggestions.add(inf)
                                 cnt_dict[inf] = 1 if not cnt_dict.get(inf, "") else cnt_dict[inf]+1
                         if type == "noun" and search_keys == ["base_translation"]:
                             pos_sing = rule_mgr.singularize(new_sugg, "english")
-                            #suggestions.add("rule_mgr 4")
-                            #pos_sing = get_singular(new_sugg)
                             for sing in pos_sing:
                                 suggestions.add(sing)
                                 cnt_dict[sing] = 1 if not cnt_dict.get(sing, "") else cnt_dict[sing]+1
@@ -2836,14 +2783,11 @@ def search_word_index(word,
                     cnt_dict[new_sugg] = 1 if not cnt_dict.get(new_sugg, "") else cnt_dict[new_sugg] + 1
                     if type in ["verb", "suru verb"] and search_keys == ["base_translation"]:
                         pos_inf = rule_mgr.infinitivize(new_sugg, "english")
-                        #pos_inf = get_infinitive(new_sugg)
                         for inf in pos_inf:
                             suggestions.add(inf)
                             cnt_dict[inf] = 1 if not cnt_dict.get(inf, "") else cnt_dict[inf]+1
                     if type == "noun" and search_keys == ["base_translation"]:
                         pos_sing = rule_mgr.singularize(new_sugg, "english")
-                        #suggestions.add("rule_mgr 5")
-                        #pos_sing = get_singular(new_sugg)
                         for sing in pos_sing:
                             suggestions.add(sing)
                             cnt_dict[sing] = 1 if not cnt_dict.get(sing, "") else cnt_dict[sing]+1
