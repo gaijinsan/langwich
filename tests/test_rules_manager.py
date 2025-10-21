@@ -47,7 +47,7 @@ def test_infinitivize_with_simple_past_minlength():
 def test_infinitivize_with_simple_past_minlength_too_short():
     word = "seed"
     infinitives = rule_mgr.infinitivize(word, "english")
-    assert unordered_lists_equal(infinitives, ["seed"])
+    assert unordered_lists_equal(infinitives, ["seed", "(to) seed"])
 
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_simple_past_y():
@@ -62,7 +62,7 @@ def test_infinitivize_with_simple_past_y_minlength():
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_simple_past_y_minlength_too_short():
     verb = "lied"
-    assert rule_mgr.infinitivize(verb, "english") == ["lied"]
+    assert rule_mgr.infinitivize(verb, "english") == ["lied", "(to) lied"]
 
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_present_participle():
@@ -80,7 +80,7 @@ def test_infinitivize_with_present_participle_minlength():
 def test_infinitivize_with_present_participle_minlength_too_short():
     verb = "ring"
     infinitives = rule_mgr.infinitivize(verb, "english")
-    assert unordered_lists_equal(infinitives, ["ring"])
+    assert unordered_lists_equal(infinitives, ["ring", "(to) ring"])
 
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_present_tense():
@@ -95,7 +95,7 @@ def test_infinitivize_with_present_tense_minlength():
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_present_tense_minlength_too_short():
     word = "its"
-    assert rule_mgr.infinitivize(word, "english") == ["its"]
+    assert rule_mgr.infinitivize(word, "english") == ["its", "(to) its"]
 
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_present_tense_es():
@@ -118,4 +118,13 @@ def test_infinitivize_with_present_tense_es_minlength_2():
 # if test name changed, update english.json test_name field too
 def test_infinitivize_with_present_tense_es_minlength_too_short():
     word = "bees"
-    assert rule_mgr.infinitivize(word, "english") == ["bees"]
+    assert rule_mgr.infinitivize(word, "english") == ["bees", "(to) bees"]
+
+# if test name changed, update english.json test_name field too
+def test_infinitivize_with_past_continuous_tense():
+    word = "were eating"
+    assert rule_mgr.infinitivize(word, "english") == ["(to) eat"]
+
+def test_infinitivize_with_default_rule():
+    word = "qqqqq"
+    assert rule_mgr.infinitivize(word, "english") == ["qqqqq", "(to) qqqqq"]

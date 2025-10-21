@@ -80,16 +80,17 @@ class RulesManager:
                     r_pattern = rule["replace_pattern"]
                     replacement = rule["replace"]
                     if re.search(pattern, w):
-                        #print(f"match: {w} with {pattern} -> {replacement}")
                         new_candidate = re.sub(r_pattern, replacement, w)
                         if new_candidate not in candidates:
                             if "prefix" in rule:
                                 new_candidate = rule["prefix"] + new_candidate
                             candidates.append(new_candidate)
-                    #else:
-                        #print(f"NO match: {w} with {pattern} -> {replacement}")
                 if not candidates:
                     candidates = [w]
+                    default_rule = rules.get(rule_type + "_default", {})
+                    if default_rule:
+                        if "prefix" in default_rule:
+                            candidates.append(default_rule["prefix"] + w)
             all_candidates.append(candidates)
 
         results = (all_candidates[0] if len(all_candidates) == 1 else
