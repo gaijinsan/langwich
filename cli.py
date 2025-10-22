@@ -366,20 +366,14 @@ def update_metadata(hash, metadata):
       json.dump(existing_metadata, f, indent=2)
 
 def get_metadata(hash=None):
-    #metadata_path = "metadata.json"
-    metadata = None
     try:
         with open(metadata_path, "r") as f:
             metadata = json.load(f)
-        if hash:
-            file_metadata = None
-            for h, m in metadata.items():
-                if h != hash:
-                    continue
-                file_metadata = m
-            metadata = file_metadata
+        if hash and hash in metadata:
+            metadata = metadata[hash]
     except FileNotFoundError:
         print("No metadata file found.")
+        metadata = None
     return metadata
 
 def fix_metadata(hash_substring=None, quiet=False):
@@ -423,14 +417,12 @@ def fix_metadata(hash_substring=None, quiet=False):
             words = text.split()
             metadata["num_words"] = len(words)
             unique_words = set(normalize_word(word.lower()) for word in words)
-            #unique_words = set(word.lower() for word in words)
             metadata["num_uniq_words"] = len(unique_words)
 
             if "lang_code" not in metadata:
                 lang_code = None
                 try:
                     langs_file = os.path.join(data_dir, "languages.json")
-                    #with open("languages.json", "r") as f:
                     with open(langs_file, "r") as f:
                         languages = json.load(f)
                     if type(languages[current_language]) is dict:
@@ -452,7 +444,6 @@ def fix_metadata(hash_substring=None, quiet=False):
             # if we've manually removed the text, don't keep its metadata
             print(f"text file '{filepath}' not found. Removing metadata.")
 
-    #metadata_path = "metadata.json"
     with open(metadata_path, "w") as f:
         json.dump(updated_metadata, f, indent=2)
 
