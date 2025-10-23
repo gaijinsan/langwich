@@ -1,0 +1,19 @@
+[build-system]
+# Tells Python which build backend to use (setuptools is standard)
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# The name under which your package is installed (MUST match your directory name)
+name = "langwich"
+version = "0.0.1"
+description = "My language app"
+#readme = "README.md"
+requires-python = ">=3.8"
+#keywords = ["deployment", "utility"]
+authors = []
+#license = {text = "MIT"}
+
+[tool.setuptools]
+# Define the package directories to include when installing
+packages = ["langwich"]
