@@ -13,7 +13,7 @@ from langwich.core.rules_manager import RulesManager
 from langwich import IS_DEV_MODE
 # Ensure GNU readline is imported so built-in input() supports arrow-key editing
 try:
-    import readline  # enables line editing and history for input()
+    import readline  # enables line editing and history for input() # noqa: F401
 except Exception:
     # Not fatal: continue without readline (Windows, minimal installs, etc.)
     pass
@@ -378,7 +378,7 @@ def get_metadata(hash=None):
 
 def fix_metadata(hash_substring=None, quiet=False):
     if not backup_metadata():
-        print(f"Metadata cannot be saved since backup failed.")
+        print("Metadata cannot be saved since backup failed.")
         return False
 
     linked_texts = None
@@ -556,7 +556,7 @@ def list_texts(filter=None, limit=None):
                 parsed_text = json.load(f)
             for word_data in parsed_text.values():
                 for tr_data in word_data:
-                    if tr_data.get("skip", False) == True:
+                    if tr_data.get("skip", False):
                         skipped += 1
                         continue
                     if tr_data.get("translation", "") != "":
@@ -592,7 +592,7 @@ def list_texts(filter=None, limit=None):
         title = metadata.get('title', 'No Title').strip()
         url = "u" if metadata.get('url', None) else "-"
         fulltext = metadata.get('fulltext', None)
-        if fulltext == None:
+        if fulltext is None:
             fulltext = '--'
         else:
             fulltext = "FT" if fulltext else f"{Fore.RED}pt{Style.RESET_ALL}"
@@ -1608,10 +1608,6 @@ def edit(edit_text=None, randomize=False):
                 if chosen_word_list_inx and len(chosen_word_list_inx) == 1:
                     chosen_word_list_inx = chosen_word_list_inx[0]
                     chosen_word_rand_inx = rand_indxs.index(chosen_word_list_inx)
-                    #if the chosen word is actually next in the main list, simply continue
-                    #if chosen_word_rand_inx == inx+1:
-                        #continue
-                    upcoming_rand_inx = rand_indxs.index(inx+1)
                     rand_indxs[chosen_word_rand_inx], rand_indxs[inx+1] = rand_indxs[inx+1], rand_indxs[chosen_word_rand_inx]
                     save_and_cont = True
                     break
@@ -1673,7 +1669,7 @@ def edit(edit_text=None, randomize=False):
                             for i, sw in enumerate(same_words):
                                 if i == 10:
                                     break
-                                max_i = 0 if max_i == None else max_i+1
+                                max_i = 0 if max_i is None else max_i+1
                                 sw_trans = parsed_text[word][sw]["translation"]
                                 sw_trans = "(none)" if not sw_trans else sw_trans
                                 if (text_sents_list
@@ -1803,7 +1799,7 @@ def edit(edit_text=None, randomize=False):
                 for i, alt_rep in enumerate(alt_reps):
                     print(f"  {i+1}) {alt_rep}")
                     max_i = i+1
-                print(f"  q) exit")
+                print("  q) exit")
                 while True:
                     user_input = input("Enter a valid option or type a new value: ")
                     if user_input in exit_letter:
@@ -1968,7 +1964,7 @@ def edit(edit_text=None, randomize=False):
 
             # let's only backup a file once per session
             if not backup_present.get("hash", "") and not backup_text_words(hash, text_words_file):
-                print(f"Word data cannot be saved since backup failed.")
+                print("Word data cannot be saved since backup failed.")
             else:
                 # Save the edits
                 try:
@@ -2052,7 +2048,7 @@ def index_words(language):
 
             for word, word_data in parsed_text.items():
                 for i, meaning in enumerate(word_data):
-                    if meaning.get("skip", "") == True:
+                    if meaning.get("skip", ""):
                         continue
 
                     i_index = meaning.get("index", -1)
@@ -2929,7 +2925,7 @@ def set_metadata(requested_hash, edit_dict):
         updated_metadata[hash] = metadata
 
     if not backup_metadata():
-        print(f"Metadata cannot be saved since backup failed.")
+        print("Metadata cannot be saved since backup failed.")
         return False
 
     #metadata_path = "metadata.json"
@@ -2956,13 +2952,13 @@ def edit_metadata(hash_substring):
             max_i = i+1
             print(f"{i+1}) {key}: ", end="")
             md_val = metadata.get(key, None)
-            if md_val == None:
+            if md_val is None:
                 md_val = Fore.RED + "<empty>" + Style.RESET_ALL
             else:
                 md_val = Fore.GREEN + str(md_val) + Style.RESET_ALL
             print(md_val)
         for key in readonly_keys:
-            if type(key) == tuple:
+            if type(key) is tuple:
                 print(f'-) {key[0]}: {Fore.BLACK}{metadata[key[0]] if key[0] in metadata else "<empty>"}{Style.RESET_ALL}', end="")
                 print(f', {key[1]}: {Fore.BLACK}{metadata[key[1]] if key[1] in metadata else "<empty>"}{Style.RESET_ALL}')
             else:
@@ -3289,13 +3285,10 @@ def study(short_hash=None, rev_study=False, lang_map=None):
                         skip_word = True
                 elif user_input.lower() == "!edit":
                     while True:
-                        try:
-                            if copy_quotes:
-                                pyperclip_copy(f'"{word}"')
-                            else:
-                                pyperclip_copy(f'{word}')
-                        except:
-                            pass
+                        if copy_quotes:
+                            pyperclip_copy(f'"{word}"')
+                        else:
+                            pyperclip_copy(f'{word}')
 
                         if IS_DEV_MODE:
                             print(f"{Fore.RED}[DEV-DATA]{Style.RESET_ALL}")
@@ -3305,7 +3298,7 @@ def study(short_hash=None, rev_study=False, lang_map=None):
                             print(f'{i+1}) {word_key}: {Fore.GREEN + word_data.get(word_key, "<empty>") + Style.RESET_ALL}')
                             max_i = i+1
                         if word_data["internal_type"] != "word":
-                            print(f"d) delete")
+                            print("d) delete")
                         #for ro_word_key in readonly_word_keys:
                             #ro_word_value = word_data.get(ro_word_key, "<empty>")
                             #print(f"-) {ro_word_key}: {ro_word_value}")
@@ -3549,7 +3542,7 @@ def study(short_hash=None, rev_study=False, lang_map=None):
             if save_required:
                 # let's only backup a file once per session
                 if not backup_present.get("hash", "") and not backup_text_words(full_hash, word_filepath):
-                    print(f"Word data cannot be saved since backup failed.")
+                    print("Word data cannot be saved since backup failed.")
                     continue
 
                 try:

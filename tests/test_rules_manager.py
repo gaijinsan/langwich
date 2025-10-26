@@ -1,4 +1,3 @@
-import pytest
 import pathlib
 from langwich.core.rules_manager import RulesManager
 from langwich.tests.utils import unordered_lists_equal

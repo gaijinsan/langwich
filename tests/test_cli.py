@@ -1,4 +1,3 @@
-import pytest
 import langwich.cli
 from langwich.cli import get_metadata, get_hashes
 
@@ -13,7 +12,7 @@ def test_get_metadata_with_no_file(monkeypatch):
     monkeypatch.setattr(langwich.cli, "metadata_path", "./tests/data/meta.json")
     metadata = get_metadata("abcde")
 
-    assert metadata == None
+    assert metadata is None
 
 def test_get_hashes_base(monkeypatch):
     monkeypatch.setattr(langwich.cli, "metadata_path", "./tests/data/metadata.json")
