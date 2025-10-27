@@ -151,6 +151,42 @@ symlink_shared_dirs() {
     done
 }
 
+# Function to create the self-contained run script
+create_run_script() {
+    RUN_SCRIPT_PATH="$RELEASE_DIR/run.sh"
+
+    # Use heredoc to write the script content
+    # Variables expanded NOW: $VENV_NAME, $PROJECT_NAME
+    # Variables expanded LATER (escaped): $@
+    cat << EOF > "$RUN_SCRIPT_PATH"
+#!/bin/bash
+# Self-contained runner for the $PROJECT_NAME application
+
+# Find the script's own directory to locate the venv
+SCRIPT_DIR=\$(dirname "\$(realpath "\$0")")
+
+# Define paths relative to the script directory
+VENV_DIR="\$SCRIPT_DIR/$VENV_NAME"
+PYTHON_EXEC="\$VENV_DIR/bin/python"
+
+# Check if venv Python exists
+if [ ! -f "\$PYTHON_EXEC" ]; then
+    echo "Error: Python interpreter not found in virtual environment." >&2
+    echo "Please ensure the venv '$VENV_NAME' has been created and dependencies installed." >&2
+    exit 1
+fi
+
+# Execute the application module using the venv's Python, passing all arguments
+echo "Running $PROJECT_NAME from venv..."
+"\$PYTHON_EXEC" -m $PROJECT_NAME.cli "\$@"
+
+EOF
+
+    # Make the script executable
+    chmod +x "$RUN_SCRIPT_PATH"
+}
+
+
 # --- DEPLOYMENT STEPS ---
 
 echo "--- Starting Deployment for $PROJECT_NAME (Release: $TIMESTAMP) ---"
@@ -204,6 +240,8 @@ fi
 # 4.6 Write the deployed version to a VERSION file in the release
 echo "Writing deployed version info to VERSION file."
 echo "$VERSION" > "$RELEASE_DIR/VERSION"
+
+create_run_script
 
 # 5. Create symlinks for persistent data files and directories
 symlink_shared_dirs
